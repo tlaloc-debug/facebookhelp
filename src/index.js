@@ -6,6 +6,8 @@ import "./index.css";
 function App(){
 
     const [list, setlist] = useState([]);
+    const [term, setterm] = useState("");
+    const [label, setlabel] = useState(false);
 
     const search = () => {
         axios.get("https://thingproxy.freeboard.io/fetch/https://api.first.org/data/v1/teams").then((response)=>{
@@ -13,13 +15,25 @@ function App(){
                     }) 
     }
 
+    const order = () => {
+        setlabel(!label)
+        setlist(list.reverse())
+    }
+    
     return (
         <div>
+            <input type="text" onChange={(e) => {setterm(e.target.value)}} />
             <button onClick={search}>search</button>
-            {list.map((items) => {
+            <button onClick={order}>{label ? "ASC" : "DESC"}</button>
+            
+            {list.filter((items) => {
+                if (items.team.toLowerCase().includes(term.toLowerCase())){
+                    return items
+                }
+            }).map((items) => {
                 return (
                     <div>
-                        <div className={"card"}>
+                        <div className={"card"} key={items.team}>
                             <div>{items.team}</div>
                             <div>{items.stablishment}</div>
                             <div>{items.address}</div>
@@ -30,7 +44,7 @@ function App(){
                         </div>
                     </div>
                 )
-            })}
+            })}    
         </div>
     )
 }

@@ -1,17 +1,38 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React, {useState} from "react";
+import ReactDOM from "react-dom";
+import axios from "axios";
+import "./index.css";
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+function App(){
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+    const [list, setlist] = useState([]);
+
+    const search = () => {
+        axios.get("https://thingproxy.freeboard.io/fetch/https://api.first.org/data/v1/teams").then((response)=>{
+                        setlist(response.data.data);
+                    }) 
+    }
+
+    return (
+        <div>
+            <button onClick={search}>search</button>
+            {list.map((items) => {
+                return (
+                    <div>
+                        <div className={"card"}>
+                            <div>{items.team}</div>
+                            <div>{items.stablishment}</div>
+                            <div>{items.address}</div>
+                            <div>{items.website}</div>
+                            <div>{items.email}</div>
+                            <div>{items.phone}</div>
+                            
+                        </div>
+                    </div>
+                )
+            })}
+        </div>
+    )
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));

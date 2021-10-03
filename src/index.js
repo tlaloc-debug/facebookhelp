@@ -1,52 +1,46 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from 'react';
 import ReactDOM from "react-dom";
+
 import axios from "axios";
-import "./index.css";
 
-function App(){
 
-    const [list, setlist] = useState([]);
-    const [term, setterm] = useState("");
-    const [label, setlabel] = useState(false);
 
-    const search = () => {
-        axios.get("https://thingproxy.freeboard.io/fetch/https://api.first.org/data/v1/teams").then((response)=>{
-                        setlist(response.data.data);
-                    }) 
-    }
-
-    const order = () => {
-        setlabel(!label)
-        setlist(list.reverse())
-    }
+const NoticesList = () => {
     
-    return (
-        <div>
-            <input type="text" onChange={(e) => {setterm(e.target.value)}} />
-            <button onClick={search}>search</button>
-            <button onClick={order}>{label ? "ASC" : "DESC"}</button>
-            
-            {list.filter((items) => {
-                if (items.team.toLowerCase().includes(term.toLowerCase())){
-                    return items
-                }
-            }).map((items) => {
-                return (
-                    <div>
-                        <div className={"card"} key={items.team}>
-                            <div>{items.team}</div>
-                            <div>{items.stablishment}</div>
-                            <div>{items.address}</div>
-                            <div>{items.website}</div>
-                            <div>{items.email}</div>
-                            <div>{items.phone}</div>
-                            
+    const [data, setData] = useState([]);
+    useEffect(() => {
+        const getData = async() => {
+            const datas = await axios.get("https://thingproxy.freeboard.io/fetch/https://api.first.org/data/v1/teams");
+            setData(datas.data.data);
+        };
+        getData();
+    }, []);
+    
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
+    
+    if(data === null){
+        return <div>Load....</div>;
+    }else{
+        console.log(data);
+        return (
+            <div>
+                {data.map((ele) => (
+                    <>
+                        <div>
+                            {ele.team};
                         </div>
-                    </div>
-                )
-            })}    
-        </div>
-    )
-}
+                    <br/>
+                    </>
+                ))}
+            </div>  
+        );
+    };
 
-ReactDOM.render(<App />, document.getElementById("root"));
+    
+    
+};
+
+ReactDOM.render(<NoticesList />, document.getElementById("root"));
+
